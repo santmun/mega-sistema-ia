@@ -1,0 +1,50 @@
+# ============================================
+# SOFIA.CONFIG.YAML
+# Configuracion de tu agente de voz con IA
+# Edita este archivo con los datos de tu cliente
+# ============================================
+
+version: "1.0"  # No tocar — para actualizaciones futuras
+
+# --- DATOS DEL NEGOCIO ---
+business:
+  name: ""                               # Nombre del negocio (ej: "Clinica Dental Sonrie")
+  industry: ""                           # Opciones: inmobiliaria, dental, abogados, gimnasio, restaurante
+  timezone: "America/Mexico_City"        # Zona horaria (busca la tuya en: timezones.io)
+  phone: ""                              # Numero de telefono del negocio con codigo de pais (ej: +525512345678)
+  address: ""                            # Direccion fisica
+  website: ""                            # Sitio web (opcional)
+  hours: ""                              # Horario de atencion (ej: "Lunes a Viernes 9:00-18:00")
+
+# --- AGENTE DE VOZ ---
+agent:
+  name: "Sofia"                          # Nombre de la asistente virtual
+  voice_id: "11lab-shimmer"              # ID de voz (Retell te da opciones al crear el agente)
+  language: "es-MX"                      # Idioma: es-MX, es-CO, es-AR, en-US, etc.
+  personality: "amable, profesional"      # Como quieres que suene (maximo 3 palabras)
+
+# --- LLAMADAS SALIENTES (OUTBOUND) ---
+outbound:
+  enabled: true                          # true = el agente hace llamadas de seguimiento
+  schedule: "09:00-17:00"               # Horario permitido para llamar
+  max_daily_calls: 20                    # Maximo de llamadas automaticas por dia
+  days:                                  # Dias activos para llamadas salientes
+    - "lun"
+    - "mar"
+    - "mie"
+    - "jue"
+    - "vie"
+
+# --- CRM (Base de datos en Notion) ---
+# Estos campos se auto-configuran segun la industria que elijas.
+# Solo modificalos si quieres personalizar algo especifico.
+crm:
+  product_name: ""                       # Se llena automaticamente segun la industria
+  product_fields: []                     # Se llena automaticamente segun la industria
+  lead_extra_fields: []                  # Se llena automaticamente segun la industria
+
+# --- APARIENCIA DEL DASHBOARD ---
+branding:
+  primary_color: "#06b6d4"              # Color principal (usa cualquier color hex)
+  logo_text: ""                          # Texto que aparece como logo (ej: nombre corto del negocio)
+  dashboard_title: "Panel de Control"    # Titulo del dashboard

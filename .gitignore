@@ -1,0 +1,28 @@
+# Credenciales — NUNCA subir a git
+.env
+.env.local
+.env.production
+
+# Modal
+.modal/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node / Dashboard
+node_modules/
+.next/
+out/
+.vercel/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

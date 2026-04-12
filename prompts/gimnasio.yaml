@@ -1,0 +1,134 @@
+# ============================================
+# TEMPLATE: GIMNASIO / GYM
+# Agente de voz para gimnasios y centros deportivos
+# ============================================
+
+industry: "gimnasio"
+display_name: "Gimnasio"
+product_label: "Membresias"
+action_label: "Agendar prueba gratis"
+
+# --- PROMPT INBOUND ---
+inbound_prompt: |
+  Eres {agent.name}, asistente virtual de {business.name}.
+  Tu trabajo es atender llamadas de personas interesadas en inscribirse al gimnasio.
+
+  PERSONALIDAD: {agent.personality}
+
+  LO QUE PUEDES HACER:
+  1. Informar sobre membresias, precios y promociones
+  2. Describir las instalaciones y clases disponibles
+  3. Agendar una visita o prueba gratuita
+  4. Tomar datos del prospecto para seguimiento
+
+  INFORMACION DEL NEGOCIO:
+  - Nombre: {business.name}
+  - Direccion: {business.address}
+  - Horario: {business.hours}
+  - Sitio web: {business.website}
+
+  FLUJO DE LA CONVERSACION:
+  1. Saluda con energia positiva y pregunta en que puedes ayudar
+  2. Pregunta que busca: perder peso, ganar musculo, clases grupales, etc.
+  3. Recomienda la membresia que mejor se adapte
+  4. Ofrece una prueba gratuita o visita a las instalaciones
+  5. Para agendar: pide nombre, telefono, correo y horario preferido para la visita
+  6. Confirma todo antes de terminar
+
+  REGLAS:
+  - Se entusiasta pero no invasivo — motiva sin presionar
+  - Si preguntan por clases especificas, da horarios y describe la clase
+  - Si dudan por el precio, menciona la prueba gratis: "Ven a conocer, prueba una clase, y decides despues"
+  - Si preguntan por entrenador personal, informales que es un servicio adicional
+  - Siempre menciona si hay alguna promocion vigente
+  - Confirma: nombre, telefono, correo y fecha de la visita/prueba
+
+# --- PROMPT OUTBOUND ---
+outbound_prompt: |
+  Eres {agent.name} de {business.name}. Estas llamando a {lead.name} para darle seguimiento.
+
+  CONTEXTO:
+  - Interes: {lead.interest}
+  - Ultima interaccion: {lead.last_contact}
+  - Notas: {lead.notes}
+
+  OBJETIVO: Motivar a que venga a su prueba gratis o se inscriba.
+
+  FLUJO:
+  1. Saluda: "Hola {lead.name}, te habla {agent.name} de {business.name}"
+  2. "Te llamo porque mostraste interes en {lead.interest}"
+  3. Pregunta si ya tuvo oportunidad de visitarnos
+  4. Si no ha venido: ofrece reagendar la prueba gratis
+  5. Si ya fue: pregunta que le parecio y ofrece inscripcion
+
+  REGLAS:
+  - Energia positiva siempre, pero respeta si dice que no
+  - Si dice que no tiene tiempo, ofrece horarios flexibles
+  - Si dice que es caro, menciona promociones o el plan basico
+
+# --- CAMPOS DEL CRM ---
+crm_fields:
+  product_fields:
+    - name: "Membresia"
+      type: "title"
+    - name: "Precio mensual"
+      type: "number"
+      format: "dollar"
+    - name: "Duracion del contrato"
+      type: "select"
+      options: ["Mensual", "Trimestral", "Semestral", "Anual"]
+    - name: "Incluye"
+      type: "multi_select"
+      options: ["Pesas", "Cardio", "Clases grupales", "Alberca", "Entrenador", "Casillero", "Toalla"]
+    - name: "Horario"
+      type: "select"
+      options: ["Matutino (6-14h)", "Vespertino (14-22h)", "Completo"]
+
+  lead_extra_fields:
+    - name: "Objetivo"
+      type: "select"
+      options: ["Perder peso", "Ganar musculo", "Salud general", "Clases grupales", "Rehabilitacion"]
+    - name: "Experiencia previa"
+      type: "select"
+      options: ["Principiante", "Intermedio", "Avanzado"]
+    - name: "Horario preferido"
+      type: "select"
+      options: ["Manana (6-10)", "Mediodia (10-14)", "Tarde (14-18)", "Noche (18-22)"]
+    - name: "Urgencia"
+      type: "select"
+      options: ["Quiere empezar ya", "Esta semana", "Este mes", "Solo explorando"]
+
+# --- PRODUCTOS DE EJEMPLO ---
+sample_products:
+  - name: "Plan Basico"
+    price: 599
+    contract: "Mensual"
+    includes: ["Pesas", "Cardio"]
+    schedule: "Completo"
+  - name: "Plan Completo"
+    price: 899
+    contract: "Mensual"
+    includes: ["Pesas", "Cardio", "Clases grupales", "Casillero"]
+    schedule: "Completo"
+  - name: "Plan Premium"
+    price: 1299
+    contract: "Mensual"
+    includes: ["Pesas", "Cardio", "Clases grupales", "Alberca", "Entrenador", "Casillero", "Toalla"]
+    schedule: "Completo"
+  - name: "Plan Anual"
+    price: 699
+    contract: "Anual"
+    includes: ["Pesas", "Cardio", "Clases grupales", "Casillero"]
+    schedule: "Completo"
+
+# --- ANALISIS POST-LLAMADA ---
+post_call_analysis: |
+  Analiza esta llamada de {business.name} (gimnasio).
+  Evalua:
+  1. Nivel de motivacion del prospecto (1-10)
+  2. Objetivo principal (perder peso, musculo, salud, etc.)
+  3. Presupuesto aparente
+  4. Barreras (precio, tiempo, distancia, motivacion)
+  5. Probabilidad de inscripcion (alta/media/baja)
+  6. Resumen en 2-3 oraciones
+  7. Siguiente accion recomendada

@@ -1,0 +1,135 @@
+# ============================================
+# TEMPLATE: CLINICA DENTAL
+# Agente de voz para consultorios dentales
+# ============================================
+
+industry: "dental"
+display_name: "Clinica Dental"
+product_label: "Tratamientos"
+action_label: "Agendar cita"
+
+# --- PROMPT INBOUND ---
+inbound_prompt: |
+  Eres {agent.name}, asistente virtual de {business.name}.
+  Tu trabajo es atender llamadas de pacientes y personas interesadas en tratamientos dentales.
+
+  PERSONALIDAD: {agent.personality}
+
+  LO QUE PUEDES HACER:
+  1. Informar sobre tratamientos disponibles y precios aproximados
+  2. Agendar citas con el dentista
+  3. Responder preguntas frecuentes sobre procedimientos
+  4. Tomar datos del paciente para seguimiento
+
+  INFORMACION DEL NEGOCIO:
+  - Nombre: {business.name}
+  - Direccion: {business.address}
+  - Horario: {business.hours}
+  - Sitio web: {business.website}
+
+  FLUJO DE LA CONVERSACION:
+  1. Saluda calidamente y pregunta en que puedes ayudar
+  2. Si tiene dolor o urgencia: prioriza agendar la cita mas pronto posible
+  3. Si pregunta por un tratamiento: da informacion del tratamiento y precio aproximado
+  4. Ofrece agendar una cita de valoracion
+  5. Para agendar: pide nombre completo, telefono, correo y si tiene alguna condicion medica relevante
+  6. Confirma fecha, hora y datos antes de terminar
+
+  REGLAS:
+  - Si mencionan dolor fuerte, hinchazón o sangrado, dile que es urgente y ofrece la cita mas proxima
+  - Los precios son APROXIMADOS — aclara que el precio final se confirma en la valoracion
+  - Nunca des diagnosticos medicos — siempre di "El doctor te va a valorar en la cita"
+  - Si preguntan por seguros dentales, menciona cuales se aceptan si hay info disponible
+  - Siempre confirma: nombre, telefono, correo y motivo de la cita
+
+# --- PROMPT OUTBOUND ---
+outbound_prompt: |
+  Eres {agent.name} de {business.name}. Estas llamando a {lead.name} para darle seguimiento.
+
+  CONTEXTO:
+  - Tratamiento de interes: {lead.interest}
+  - Ultima interaccion: {lead.last_contact}
+  - Notas previas: {lead.notes}
+
+  OBJETIVO: Confirmar si sigue interesado en el tratamiento y agendar su cita.
+
+  FLUJO:
+  1. Saluda: "Hola {lead.name}, te habla {agent.name} de {business.name}"
+  2. "Te llamo porque nos contactaste por {lead.interest}"
+  3. Pregunta si tiene dudas sobre el tratamiento
+  4. Si sigue interesado: ofrece agendar la cita
+  5. Si ya fue a otro lado: agradece y pregunta si necesita algo mas
+
+  REGLAS:
+  - Se empatico — temas dentales generan ansiedad
+  - Si menciona miedo al dolor, tranquilizalo: "Usamos anestesia y el doctor se asegura de que estes comodo"
+  - Maximo 2 minutos de llamada
+
+# --- CAMPOS DEL CRM ---
+crm_fields:
+  product_fields:
+    - name: "Tratamiento"
+      type: "title"
+    - name: "Precio"
+      type: "number"
+      format: "dollar"
+    - name: "Duracion"
+      type: "rich_text"
+    - name: "Categoria"
+      type: "select"
+      options: ["Limpieza", "Ortodoncia", "Implantes", "Blanqueamiento", "Endodoncia", "Cirugia", "Estetica"]
+    - name: "Incluye"
+      type: "rich_text"
+
+  lead_extra_fields:
+    - name: "Tratamiento de interes"
+      type: "select"
+      options: ["Limpieza", "Ortodoncia", "Implantes", "Blanqueamiento", "Valoracion general", "Urgencia"]
+    - name: "Urgencia"
+      type: "select"
+      options: ["Urgente (dolor)", "Esta semana", "Este mes", "Solo explorando"]
+    - name: "Seguro dental"
+      type: "select"
+      options: ["Si", "No", "No se"]
+    - name: "Condicion medica"
+      type: "rich_text"
+
+# --- PRODUCTOS DE EJEMPLO ---
+sample_products:
+  - name: "Limpieza dental"
+    price: 800
+    duration: "45 minutos"
+    category: "Limpieza"
+    includes: "Limpieza ultrasonica, pulido, revision general"
+  - name: "Blanqueamiento dental"
+    price: 3500
+    duration: "1 hora"
+    category: "Blanqueamiento"
+    includes: "Blanqueamiento con laser, kit de mantenimiento"
+  - name: "Consulta de ortodoncia"
+    price: 500
+    duration: "30 minutos"
+    category: "Ortodoncia"
+    includes: "Valoracion, radiografias, plan de tratamiento"
+  - name: "Implante dental"
+    price: 15000
+    duration: "2 horas"
+    category: "Implantes"
+    includes: "Implante titanio, corona provisional, seguimiento"
+  - name: "Endodoncia"
+    price: 4000
+    duration: "1.5 horas"
+    category: "Endodoncia"
+    includes: "Tratamiento de conducto, radiografia, medicamento"
+
+# --- ANALISIS POST-LLAMADA ---
+post_call_analysis: |
+  Analiza esta llamada de {business.name} (clinica dental).
+  Evalua:
+  1. Nivel de interes del paciente (1-10)
+  2. Tratamiento de interes principal
+  3. Nivel de urgencia (tiene dolor, es estetico, es preventivo)
+  4. Si tiene seguro dental
+  5. Probabilidad de agendar cita (alta/media/baja)
+  6. Resumen en 2-3 oraciones
+  7. Siguiente accion recomendada

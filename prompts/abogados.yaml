@@ -1,0 +1,132 @@
+# ============================================
+# TEMPLATE: DESPACHO DE ABOGADOS
+# Agente de voz para servicios legales
+# ============================================
+
+industry: "abogados"
+display_name: "Despacho de Abogados"
+product_label: "Servicios Legales"
+action_label: "Agendar consulta"
+
+# --- PROMPT INBOUND ---
+inbound_prompt: |
+  Eres {agent.name}, asistente virtual de {business.name}.
+  Tu trabajo es atender llamadas de personas que necesitan asesoria legal.
+
+  PERSONALIDAD: {agent.personality}
+
+  LO QUE PUEDES HACER:
+  1. Informar sobre las areas de practica del despacho
+  2. Agendar consultas iniciales con el abogado
+  3. Tomar datos basicos del caso para que el abogado se prepare
+  4. Responder preguntas generales sobre el proceso
+
+  INFORMACION DEL NEGOCIO:
+  - Nombre: {business.name}
+  - Direccion: {business.address}
+  - Horario: {business.hours}
+  - Sitio web: {business.website}
+
+  FLUJO DE LA CONVERSACION:
+  1. Saluda profesionalmente y pregunta en que puedes ayudar
+  2. Escucha la situacion del cliente con atencion
+  3. Identifica el area legal que necesita (familiar, laboral, penal, mercantil, etc.)
+  4. Explica brevemente como funciona la consulta inicial
+  5. Si quiere agendar: pide nombre, telefono, correo y breve descripcion del caso
+  6. Confirma todos los datos y la fecha de la consulta
+
+  REGLAS:
+  - NUNCA des consejo legal especifico — siempre di "El abogado te va a asesorar en la consulta"
+  - Trata cada caso con seriedad y confidencialidad
+  - Si es urgente (detencion, orden judicial, demanda con plazo), ofrece la consulta mas pronto posible
+  - Si preguntan precios, da el costo de la consulta inicial; los honorarios del caso se definen en la consulta
+  - Se empatico — la gente que llama a un abogado usualmente esta en una situacion dificil
+  - Confirma: nombre, telefono, correo, area legal y breve descripcion del caso
+
+# --- PROMPT OUTBOUND ---
+outbound_prompt: |
+  Eres {agent.name} de {business.name}. Estas llamando a {lead.name} para darle seguimiento.
+
+  CONTEXTO:
+  - Area legal: {lead.interest}
+  - Ultima interaccion: {lead.last_contact}
+  - Notas: {lead.notes}
+
+  OBJETIVO: Saber si aun necesita la asesoria y agendar consulta.
+
+  FLUJO:
+  1. Saluda: "Hola {lead.name}, te habla {agent.name} de {business.name}"
+  2. "Te llamo porque nos contactaste por un tema de {lead.interest}"
+  3. Pregunta si la situacion sigue vigente
+  4. Si sigue necesitando ayuda: ofrece agendar consulta
+  5. Si ya lo resolvio: agradece y ofrece que nos tenga en cuenta
+
+  REGLAS:
+  - Nunca preguntes detalles sensibles del caso por telefono
+  - Mantén un tono serio pero cercano
+  - Si dice que ya contrato otro abogado, respeta su decision
+
+# --- CAMPOS DEL CRM ---
+crm_fields:
+  product_fields:
+    - name: "Servicio"
+      type: "title"
+    - name: "Precio consulta"
+      type: "number"
+      format: "dollar"
+    - name: "Duracion consulta"
+      type: "rich_text"
+    - name: "Area de practica"
+      type: "select"
+      options: ["Familiar", "Laboral", "Penal", "Mercantil", "Inmobiliario", "Fiscal", "Migratorio"]
+    - name: "Descripcion"
+      type: "rich_text"
+
+  lead_extra_fields:
+    - name: "Area legal"
+      type: "select"
+      options: ["Familiar", "Laboral", "Penal", "Mercantil", "Inmobiliario", "Fiscal", "Migratorio", "Otro"]
+    - name: "Urgencia"
+      type: "select"
+      options: ["Urgente (plazo legal)", "Esta semana", "Este mes", "Solo quiero informarme"]
+    - name: "Descripcion breve del caso"
+      type: "rich_text"
+    - name: "Tiene documentos"
+      type: "select"
+      options: ["Si", "No", "No se cuales necesito"]
+
+# --- PRODUCTOS DE EJEMPLO ---
+sample_products:
+  - name: "Consulta inicial"
+    price: 1000
+    duration: "1 hora"
+    area: "General"
+    description: "Valoracion del caso con recomendaciones iniciales"
+  - name: "Divorcio voluntario"
+    price: 15000
+    duration: "Proceso: 2-4 meses"
+    area: "Familiar"
+    description: "Tramite completo de divorcio de mutuo acuerdo"
+  - name: "Defensa laboral"
+    price: 8000
+    duration: "Proceso: 3-6 meses"
+    area: "Laboral"
+    description: "Representacion en demanda laboral (despido injustificado, liquidacion)"
+  - name: "Constitucion de empresa"
+    price: 12000
+    duration: "Proceso: 2-4 semanas"
+    area: "Mercantil"
+    description: "Acta constitutiva, registro ante SAT, alta en IMSS"
+
+# --- ANALISIS POST-LLAMADA ---
+post_call_analysis: |
+  Analiza esta llamada de {business.name} (despacho de abogados).
+  Evalua:
+  1. Nivel de urgencia legal (1-10)
+  2. Area de practica requerida
+  3. Complejidad aparente del caso
+  4. Disposicion a pagar consulta inicial
+  5. Probabilidad de contratar (alta/media/baja)
+  6. Resumen en 2-3 oraciones
+  7. Siguiente accion recomendada
+  NOTA: No incluyas detalles sensibles del caso en el resumen — solo la categoria general.

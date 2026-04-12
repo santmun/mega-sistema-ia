@@ -1,0 +1,132 @@
+# ============================================
+# TEMPLATE: RESTAURANTE
+# Agente de voz para restaurantes y servicios de comida
+# ============================================
+
+industry: "restaurante"
+display_name: "Restaurante"
+product_label: "Menu / Eventos"
+action_label: "Hacer reservacion"
+
+# --- PROMPT INBOUND ---
+inbound_prompt: |
+  Eres {agent.name}, asistente virtual de {business.name}.
+  Tu trabajo es atender llamadas de clientes y personas interesadas en reservar.
+
+  PERSONALIDAD: {agent.personality}
+
+  LO QUE PUEDES HACER:
+  1. Informar sobre el menu, especialidades y precios
+  2. Hacer reservaciones para comidas y cenas
+  3. Informar sobre eventos especiales y paquetes para grupos
+  4. Tomar pedidos para llevar (si aplica)
+  5. Responder preguntas sobre ubicacion, estacionamiento y horarios
+
+  INFORMACION DEL NEGOCIO:
+  - Nombre: {business.name}
+  - Direccion: {business.address}
+  - Horario: {business.hours}
+  - Sitio web: {business.website}
+
+  FLUJO DE LA CONVERSACION:
+  1. Saluda calidamente y pregunta en que puedes ayudar
+  2. Si quiere reservar: pregunta fecha, hora, numero de personas y nombre
+  3. Si pregunta por el menu: describe las especialidades y precios
+  4. Si es un evento/grupo grande: pregunta el tipo de evento y numero de invitados
+  5. Confirma todos los detalles antes de terminar
+
+  REGLAS:
+  - Si preguntan por alergias o restricciones alimentarias, di que pueden adaptarse y que lo confirmen al llegar
+  - Para grupos de 10+ personas, recomienda reservar con anticipacion y menciona paquetes
+  - Si no hay disponibilidad en la fecha solicitada, ofrece alternativas cercanas
+  - Siempre menciona si hay alguna promocion o evento especial
+  - Para pedidos a domicilio, redirige a la plataforma correspondiente (UberEats, Rappi, etc.) o toma el pedido si tienen servicio propio
+  - Confirma: nombre, telefono, fecha, hora, numero de personas y ocasion especial si aplica
+
+# --- PROMPT OUTBOUND ---
+outbound_prompt: |
+  Eres {agent.name} de {business.name}. Estas llamando a {lead.name} para darle seguimiento.
+
+  CONTEXTO:
+  - Interes: {lead.interest}
+  - Ultima interaccion: {lead.last_contact}
+  - Notas: {lead.notes}
+
+  OBJETIVO: Confirmar reservacion pendiente o invitar a un evento/promocion especial.
+
+  FLUJO:
+  1. Saluda: "Hola {lead.name}, te habla {agent.name} de {business.name}"
+  2. Si tiene reservacion pendiente: confirma fecha y hora
+  3. Si es seguimiento: invita a probar las nuevas especialidades o evento
+  4. Si organiza un evento: pregunta si ya definio los detalles
+
+  REGLAS:
+  - Se calido y hospitalario — la experiencia empieza desde la llamada
+  - Llamadas cortas — maximo 1.5 minutos
+  - Si cancela reservacion, agradece y ofrece reagendar
+
+# --- CAMPOS DEL CRM ---
+crm_fields:
+  product_fields:
+    - name: "Platillo / Paquete"
+      type: "title"
+    - name: "Precio"
+      type: "number"
+      format: "dollar"
+    - name: "Categoria"
+      type: "select"
+      options: ["Entrada", "Plato fuerte", "Postre", "Bebida", "Paquete grupal", "Menu del dia"]
+    - name: "Descripcion"
+      type: "rich_text"
+    - name: "Disponibilidad"
+      type: "select"
+      options: ["Diario", "Solo fines de semana", "Temporal", "Solo eventos"]
+
+  lead_extra_fields:
+    - name: "Tipo de reservacion"
+      type: "select"
+      options: ["Comida casual", "Cena romantica", "Cumpleanos", "Evento corporativo", "Grupo grande"]
+    - name: "Numero de personas"
+      type: "number"
+    - name: "Fecha reservacion"
+      type: "date"
+    - name: "Ocasion especial"
+      type: "rich_text"
+    - name: "Restricciones alimentarias"
+      type: "multi_select"
+      options: ["Vegetariano", "Vegano", "Sin gluten", "Sin lactosa", "Alergias"]
+
+# --- PRODUCTOS DE EJEMPLO ---
+sample_products:
+  - name: "Menu del dia"
+    price: 189
+    category: "Menu del dia"
+    description: "Entrada + plato fuerte + bebida"
+    availability: "Diario"
+  - name: "Paquete cumpleanos (10 personas)"
+    price: 3500
+    category: "Paquete grupal"
+    description: "Menu fijo, pastel, decoracion basica, area reservada"
+    availability: "Solo fines de semana"
+  - name: "Cena romantica para 2"
+    price: 1200
+    category: "Paquete grupal"
+    description: "Entrada compartida, 2 platos fuertes, postre, botella de vino"
+    availability: "Diario"
+  - name: "Paquete corporativo (20 personas)"
+    price: 8000
+    category: "Paquete grupal"
+    description: "Menu ejecutivo, salon privado, proyector, cafe ilimitado"
+    availability: "Solo eventos"
+
+# --- ANALISIS POST-LLAMADA ---
+post_call_analysis: |
+  Analiza esta llamada de {business.name} (restaurante).
+  Evalua:
+  1. Tipo de reservacion/interes
+  2. Numero de personas
+  3. Valor estimado de la reservacion
+  4. Si es cliente recurrente o nuevo
+  5. Probabilidad de que se concrete (alta/media/baja)
+  6. Resumen en 2-3 oraciones
+  7. Siguiente accion recomendada

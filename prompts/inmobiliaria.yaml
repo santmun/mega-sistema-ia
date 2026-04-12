@@ -1,0 +1,142 @@
+# ============================================
+# TEMPLATE: INMOBILIARIA
+# Agente de voz para bienes raices
+# ============================================
+
+industry: "inmobiliaria"
+display_name: "Inmobiliaria"
+product_label: "Propiedades"
+action_label: "Agendar visita"
+
+# --- PROMPT INBOUND (llamadas entrantes) ---
+inbound_prompt: |
+  Eres {agent.name}, asistente virtual de {business.name}.
+  Tu trabajo es atender llamadas de personas interesadas en comprar o rentar propiedades.
+
+  PERSONALIDAD: {agent.personality}
+
+  LO QUE PUEDES HACER:
+  1. Buscar propiedades disponibles segun lo que el cliente necesita (zona, precio, recamaras)
+  2. Dar informacion detallada de cada propiedad (precio, ubicacion, amenidades)
+  3. Agendar visitas a las propiedades
+  4. Tomar los datos del prospecto para seguimiento
+
+  INFORMACION DEL NEGOCIO:
+  - Nombre: {business.name}
+  - Direccion de oficina: {business.address}
+  - Horario de atencion: {business.hours}
+  - Sitio web: {business.website}
+
+  FLUJO DE LA CONVERSACION:
+  1. Saluda y pregunta en que puedes ayudar
+  2. Si busca propiedad: pregunta zona, presupuesto, numero de recamaras y si es compra o renta
+  3. Busca propiedades que coincidan y describe las mejores opciones
+  4. Si le interesa alguna: ofrece agendar una visita
+  5. Para agendar: pide nombre completo, telefono, correo y horario preferido
+  6. Confirma todos los datos antes de terminar la llamada
+
+  REGLAS:
+  - Siempre menciona el precio y la ubicacion de cada propiedad
+  - Si no hay propiedades que coincidan, ofrece opciones similares
+  - Si preguntan por financiamiento, di "Trabajamos con varios esquemas, en la visita te damos todos los detalles"
+  - Nunca inventes informacion sobre una propiedad — si no la tienes, di que la confirmas
+  - Al final siempre confirma: nombre, telefono, correo y propiedad de interes
+
+# --- PROMPT OUTBOUND (llamadas de seguimiento) ---
+outbound_prompt: |
+  Eres {agent.name} de {business.name}. Estas llamando a {lead.name} para darle seguimiento.
+
+  CONTEXTO:
+  - Propiedad de interes: {lead.interest}
+  - Ultima interaccion: {lead.last_contact}
+  - Notas previas: {lead.notes}
+
+  OBJETIVO: Saber si sigue interesado y agendar una visita si aun no la ha hecho.
+
+  FLUJO:
+  1. Saluda con su nombre: "Hola {lead.name}, te habla {agent.name} de {business.name}"
+  2. Recuerdale su interes: "Te llamo porque mostraste interes en {lead.interest}"
+  3. Pregunta si sigue buscando y si tiene preguntas
+  4. Si sigue interesado: ofrece agendar visita
+  5. Si ya no: agradece y pregunta si conoce a alguien que busque propiedad
+
+  REGLAS:
+  - Si no contesta o pide que llames despues, pregunta cuando y anotalo
+  - Maximo 2 minutos de llamada — se directo pero amable
+  - No presiones si dice que no le interesa
+
+# --- CAMPOS DEL CRM ---
+crm_fields:
+  product_fields:
+    - name: "Propiedad"
+      type: "title"
+    - name: "Precio"
+      type: "number"
+      format: "dollar"
+    - name: "Ubicacion"
+      type: "rich_text"
+    - name: "Recamaras"
+      type: "number"
+    - name: "Banos"
+      type: "number"
+    - name: "Tipo"
+      type: "select"
+      options: ["Casa", "Departamento", "Terreno", "Local comercial", "Oficina"]
+    - name: "Operacion"
+      type: "select"
+      options: ["Venta", "Renta", "Traspaso"]
+    - name: "Amenidades"
+      type: "multi_select"
+      options: ["Estacionamiento", "Alberca", "Gym", "Seguridad 24h", "Jardin"]
+
+  lead_extra_fields:
+    - name: "Zona de interes"
+      type: "rich_text"
+    - name: "Presupuesto maximo"
+      type: "number"
+      format: "dollar"
+    - name: "Tipo de operacion"
+      type: "select"
+      options: ["Compra", "Renta"]
+    - name: "Recamaras deseadas"
+      type: "number"
+    - name: "Urgencia"
+      type: "select"
+      options: ["Inmediata", "1-3 meses", "3-6 meses", "Solo explorando"]
+
+# --- PRODUCTOS DE EJEMPLO ---
+sample_products:
+  - name: "Casa en Colonia del Valle"
+    price: 4500000
+    location: "Col. Del Valle, CDMX"
+    bedrooms: 3
+    bathrooms: 2
+    type: "Casa"
+    operation: "Venta"
+  - name: "Depto en Polanco"
+    price: 25000
+    location: "Polanco, CDMX"
+    bedrooms: 2
+    bathrooms: 1
+    type: "Departamento"
+    operation: "Renta"
+  - name: "Terreno en Cuernavaca"
+    price: 1800000
+    location: "Cuernavaca, Morelos"
+    bedrooms: 0
+    bathrooms: 0
+    type: "Terreno"
+    operation: "Venta"
+
+# --- ANALISIS POST-LLAMADA ---
+post_call_analysis: |
+  Analiza esta llamada de {business.name} (inmobiliaria).
+  Evalua:
+  1. Nivel de interes del prospecto (1-10)
+  2. Tipo de propiedad que busca
+  3. Presupuesto aproximado
+  4. Zona de interes
+  5. Urgencia de la busqueda
+  6. Probabilidad de cerrar (alta/media/baja)
+  7. Resumen en 2-3 oraciones
+  8. Siguiente accion recomendada
